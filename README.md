@@ -15,7 +15,7 @@ META_KEYWORD="
 META_DESCRIPTION=
 META_SITE_NAME=
 GTAG=<google tag manager id>
-TWITTER_PROFILE=<twitter handle>
+TWITTER_PROFILE=<twitter handler>
 ```
 
 Once you have created the project, install dependencies and run the project in development mode:
