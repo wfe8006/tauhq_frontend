@@ -13,12 +13,13 @@
    .then((r) => r.json())
    .then((tokens) => {
     let m = new Map();
-    if (Object.keys(tokens.Social).length > 0) {
-     for (const key in tokens.Social) {
-      m.set(key, tokens.Social[key]);
+    if ("Social" in tokens) {
+     if (Object.keys(tokens.Social).length > 0) {
+      for (const key in tokens.Social) {
+       m.set(key, tokens.Social[key]);
+      }
      }
     }
-
     var price = "";
     if (tokens.LastPriceTAU == 0) {
      price = "hidden";
@@ -131,8 +132,10 @@
      },
     ];
 
-    if (Object.keys(tokens.Social).length > 0) {
-     stats.push({ name: "Social", value: "", tooltip: "" });
+    if ("Social" in tokens) {
+     if (Object.keys(tokens.Social).length > 0) {
+      stats.push({ name: "Social", value: "", tooltip: "" });
+     }
     }
 
     return { tokens, tokenName, address, social: m, stats };
