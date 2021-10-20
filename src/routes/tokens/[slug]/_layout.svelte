@@ -25,7 +25,7 @@
      price = "hidden";
     } else {
      if (tokenName == "con_weth_lst001") {
-      price = "$$" + parseFloat(tokens.TAUPriceUSD).toFixed(12);
+      price = "$" + parseFloat(tokens.TAUPriceUSD).toFixed(12);
      } else {
       price =
        "$" +
