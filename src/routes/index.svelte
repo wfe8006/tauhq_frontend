@@ -62,7 +62,7 @@
      },
      {
       name: "Stamps per TAU",
-      total: "65",
+      total: "108",
       icon: "fa-gas-pump",
       color: "success",
       link: "/",
