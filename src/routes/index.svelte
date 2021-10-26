@@ -62,7 +62,7 @@
      },
      {
       name: "Stamps per TAU",
-      total: "108",
+      total: summary.StampsPerTAU,
       icon: "fa-gas-pump",
       color: "success",
       link: "/",
