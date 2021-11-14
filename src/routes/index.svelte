@@ -154,9 +154,9 @@
       alt="{contract.DappName}"
      />
      <div class="content">
+      <span class="badge badge-success">{contract.DappCategory}</span>
       <h2 class="content-title">
        {contract.DappName}
-       <span class="badge badge-success">{contract.DappCategory}</span>
       </h2>
       <p class="text-muted">
        {contract.DappDescription}
@@ -193,5 +193,27 @@
  }
  .black {
   color: black;
+ }
+
+ @media (min-width: 769px) {
+  .card {
+   margin: 0.7rem;
+   height: 100%;
+  }
+
+  .content {
+   margin: 2rem;
+   display: flex;
+   flex-direction: column;
+  }
+
+  .badge.badge-success {
+   align-self: end;
+   margin-bottom: 1rem;
+  }
+
+  .content-title {
+   margin-bottom: 0;
+  }
  }
 </style>
