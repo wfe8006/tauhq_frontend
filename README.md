@@ -1,5 +1,4 @@
-# Lamden Block Explorer Frontend 
-
+# Lamden Block Explorer Frontend
 
 ### Running the project
 
@@ -15,6 +14,7 @@ META_KEYWORD="
 META_DESCRIPTION=
 META_SITE_NAME=
 GTAG=<google tag manager id>
+ADSENSE=<google adsense id>
 TWITTER_PROFILE=<twitter handler>
 ```
 

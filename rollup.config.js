@@ -35,6 +35,7 @@ export default {
                 "process.env.WEBSITE": JSON.stringify(process.env.WEBSITE),
                 "process.env.SITE_NAME": JSON.stringify(process.env.SITE_NAME),
                 "process.env.GTAG": JSON.stringify(process.env.GTAG),
+                "process.env.ADSENSE": JSON.stringify(process.env.ADSENSE),
                 "process.env.TAU_DONATION_ADDRESS": JSON.stringify(
                     process.env.TAU_DONATION_ADDRESS
                 ),
