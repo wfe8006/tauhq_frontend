@@ -1,12 +1,13 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var firstID = 0;
   var lastID = 0;
   var url;
   var tokenName = params.slug;
   var isFirstPage = 1;
   var address;
-  if (query.address) {
+  if (query.get("address")) {
    address = query.address;
   } else {
    address = "";
@@ -14,32 +15,33 @@
   console.log("addr: " + address.length);
 
   if (
-   (query.id > 1 && query.dir) ||
-   (query.id > 1 && query.dir && query.address)
+   (query.get("id") > 1 && query.get("dir")) ||
+   (query.get("id") > 1 && query.get("dir") && query.get("address"))
   ) {
-   var id = parseFloat(query.id);
-   var dir = query.dir;
+   var id = parseFloat(query.get("id"));
+   var dir = query.get("dir");
    isFirstPage = 0;
    url =
-    process.env.API_SERVER +
+    import.meta.env.VITE_API_SERVER +
     "/tokens/" +
     tokenName +
     "/dextrades?dir=" +
     dir +
     "&id=" +
     id;
-   if (query.address) {
+   if (query.get("address")) {
     url += "&address=" + address;
    }
   } else {
-   url = process.env.API_SERVER + "/tokens/" + tokenName + "/dextrades";
-   if (query.address) {
-    url += "?address=" + query.address;
+   url =
+    import.meta.env.VITE_API_SERVER + "/tokens/" + tokenName + "/dextrades";
+   if (query.get("address")) {
+    url += "?address=" + query.get("address");
    }
   }
   var totalRecords = 0;
   console.log("line 41");
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((dextrades) => {
     var transactions = [];
@@ -59,14 +61,16 @@
      console.log("there");
     }
     return {
-     transactions,
-     firstID,
-     lastID,
-     tokenName,
-     address,
-     isFirstPage,
-     oldestID: dextrades.OldestID,
-     symbol: dextrades.Symbol,
+     props: {
+      transactions,
+      firstID,
+      lastID,
+      tokenName,
+      address,
+      isFirstPage,
+      oldestID: dextrades.OldestID,
+      symbol: dextrades.Symbol,
+     },
     };
    });
  }
@@ -82,7 +86,7 @@
  export let symbol;
  export let address;
  import { getContext } from "svelte";
- import { numberWithCommas, timesince } from "../../../js/utils";
+ import { numberWithCommas, timesince } from "$lib/utils";
 </script>
 
 <svelte:head>
@@ -92,7 +96,7 @@
  >
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/tokens/{tokenName}/dextrades"
+  content="{import.meta.env.VITE_WEBSITE}/tokens/{tokenName}/dextrades"
  />
 </svelte:head>
 
@@ -110,7 +114,7 @@
    </li>
   {:else}
    <li class="page-item">
-    <a sapper:noscroll href="/tokens/{tokenName}/dextrades" class="page-link"
+    <a sveltekit:noscroll href="/tokens/{tokenName}/dextrades" class="page-link"
      >First</a
     >
    </li>
@@ -122,7 +126,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
             /tokens/{tokenName}/dextrades?dir=prev&id={firstID}
         "
@@ -134,7 +138,7 @@
   {#if transactions.length == 25 && transactions[transactions.length - 1].ID > oldestID}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
             /tokens/{tokenName}/dextrades?dir=next&id={lastID}
           "
@@ -223,7 +227,7 @@
    </li>
   {:else}
    <li class="page-item">
-    <a sapper:noscroll href="/tokens/{tokenName}/dextrades" class="page-link"
+    <a sveltekit:noscroll href="/tokens/{tokenName}/dextrades" class="page-link"
      >First</a
     >
    </li>
@@ -235,7 +239,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
             /tokens/{tokenName}/dextrades?dir=prev&id={firstID}
         "
@@ -247,7 +251,7 @@
   {#if transactions.length == 25 && transactions[transactions.length - 1].ID > oldestID}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
             /tokens/{tokenName}/dextrades?dir=next&id={lastID}
           "

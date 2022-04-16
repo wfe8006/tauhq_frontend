@@ -1,5 +1,6 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ url, params, session }) {
+  var query = url.searchParams;
   var firstPage = 1;
   var prevPage = 1;
   var currentPage = 1;
@@ -12,12 +13,13 @@
   var firstBalance = 0;
   var lastID = 0;
   var lastBalance = 0;
-  var dir = query.dir;
-  if (query.id && query.balance && query.dir) {
-   var id = parseFloat(query.id);
-   var balance = parseFloat(query.balance);
+  var dir = query.get("dir");
+
+  if (query.get("id") && query.get("balance") && query.get("dir")) {
+   var id = parseFloat(query.get("id"));
+   var balance = parseFloat(query.get("balance"));
    url =
-    process.env.API_SERVER +
+    import.meta.env.VITE_API_SERVER +
     "/addresses?id=" +
     id +
     "&balance=" +
@@ -26,11 +28,12 @@
     dir;
    isFirstPage = 0;
   } else {
-   url = process.env.API_SERVER + "/addresses";
+   url = import.meta.env.VITE_API_SERVER + "/addresses";
   }
+  console.log("url: " + url);
 
   var totalRecords = 0;
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((addresses) => {
     firstID = addresses[0].ID;
@@ -43,22 +46,24 @@
     }
 
     return {
-     addresses,
-     firstID,
-     firstBalance,
-     lastID,
-     lastBalance,
-     isFirstPage,
-     dir,
-     url,
+     props: {
+      addresses,
+      firstID,
+      firstBalance,
+      lastID,
+      lastBalance,
+      isFirstPage,
+      dir,
+      url,
+     },
     };
    });
  }
 </script>
 
 <script>
- import { numberWithCommas, timesince } from "../../js/utils";
- import Metatag from "../../components/Metatag.svelte";
+ import { numberWithCommas, timesince } from "$lib/utils";
+ import Metatag from "$lib/Metatag.svelte";
  export let addresses;
  export let isFirstPage;
  export let firstID;
@@ -69,7 +74,7 @@
 
 <svelte:head>
  <title>Lamden Addresses</title>
- <meta property="og:url" content="{process.env.WEBSITE}/addresses" />
+ <meta property="og:url" content="{import.meta.env.VITE_WEBSITE}/addresses" />
  <Metatag />
 </svelte:head>
 

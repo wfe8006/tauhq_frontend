@@ -1,15 +1,16 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var address;
-  if (query.address) {
-   address = query.address;
+  if (query.get("address")) {
+   address = query.get("address");
   } else {
    address = "";
   }
   var url;
   var tokenName = params.slug;
-  url = process.env.API_SERVER + "/tokens/" + tokenName;
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/tokens/" + tokenName;
+  return fetch(url)
    .then((r) => r.json())
    .then((tokens) => {
     let m = new Map();
@@ -138,18 +139,19 @@
      }
     }
 
-    return { tokens, tokenName, address, social: m, stats };
+    return { props: { tokens, tokenName, address, social: m, stats } };
    });
  }
 </script>
 
 <script>
  export let address;
- export let segment;
  export let tokenName;
  export let tokens;
  export let social;
  export let stats;
+
+ import { page } from "$app/stores";
 
  import { setContext, onMount, afterUpdate } from "svelte";
  //https://stackoverflow.com/questions/59603406/slot-prop-within-layout-svelte-not-passing-prop
@@ -167,12 +169,7 @@
    : numberWithCommas(tokens.TotalSupply)
  );
 
- import {
-  titleCase,
-  nFormatter,
-  numberWithCommas,
-  timesince,
- } from "../../../js/utils";
+ import { nFormatter, numberWithCommas, timesince } from "$lib/utils";
 
  const handleClick = async () => {
   var url = "tokens/" + tokenName + "/transfers";
@@ -186,24 +183,27 @@
 <svelte:head>
  <meta
   property="og:image"
-  content="{process.env.IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
+  content="{import.meta.env
+   .VITE_IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
  />
  <meta name="twitter:card" content="summary" />
  <meta
   name="twitter:image"
-  content="{process.env.IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
+  content="{import.meta.env
+   .VITE_IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
  />
 </svelte:head>
 
 <div class="row header">
  <object
-  data="{process.env.IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
+  data="{import.meta.env
+   .VITE_IMG_SERVER}/img/token_logo/{tokens.TokenContract}.jpg"
   type="image/jpg"
   class="token_logo"
   aria-label="{tokens.TokenName}"
  >
   <img
-   src="{process.env.IMG_SERVER}/img/token_logo/unknown.svg"
+   src="{import.meta.env.VITE_IMG_SERVER}/img/token_logo/unknown.svg"
    alt="no image"
    class="token_logo"
   />
@@ -278,44 +278,44 @@
   <div class="btn-group" role="group">
    <a
     rel="prefetch"
-    aria-current="{segment === '' ? 'tokens' : undefined}"
+    aria-current="{$page.url.pathname === '' ? 'tokens' : undefined}"
     href="/tokens/{tokenName}{address == '' ? '' : '?address=' + address}"
-    class:active="{segment === undefined}"
+    class:active="{$page.url.pathname === undefined}"
     class="btn"
-    sapper:noscroll>DEX Chart</a
+    sveltekit:noscroll>DEX Chart</a
    >
 
    <a
     rel="prefetch"
-    aria-current="{segment === 'dextrades' ? 'page' : undefined}"
+    aria-current="{$page.url.pathname === 'dextrades' ? 'page' : undefined}"
     href="/tokens/{tokenName}/dextrades{address == ''
      ? ''
      : '?address=' + address}"
-    class:active="{segment === 'dextrades'}"
+    class:active="{$page.url.pathname === 'dextrades'}"
     class="btn"
-    sapper:noscroll>DEX Trades</a
+    sveltekit:noscroll>DEX Trades</a
    >
 
    <a
     rel="prefetch"
-    aria-current="{segment === 'addresses' ? 'page' : undefined}"
+    aria-current="{$page.url.pathname === 'addresses' ? 'page' : undefined}"
     href="/tokens/{tokenName}/addresses{address == ''
      ? ''
      : '?address=' + address}"
-    class:active="{segment === 'addresses'}"
+    class:active="{$page.url.pathname === 'addresses'}"
     class="btn"
-    sapper:noscroll>Holders</a
+    sveltekit:noscroll>Holders</a
    >
 
    <a
     rel="prefetch"
-    aria-current="{segment === 'transfers' ? 'page' : undefined}"
+    aria-current="{$page.url.pathname === 'transfers' ? 'page' : undefined}"
     href="/tokens/{tokenName}/transfers{address == ''
      ? ''
      : '?address=' + address}"
-    class:active="{segment === 'transfers'}"
+    class:active="{$page.url.pathname === 'transfers'}"
     class="btn"
-    sapper:noscroll>Transfers</a
+    sveltekit:noscroll>Transfers</a
    >
   </div>
  </div>

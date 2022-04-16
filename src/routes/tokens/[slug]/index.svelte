@@ -1,9 +1,12 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  console.log("hello");
+  var query = url.searchParams;
   var url;
   var hasData = 0;
-  url = process.env.API_SERVER + "/tokens/" + params.slug + "/chart";
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/tokens/" + params.slug + "/chart";
+  console.log("url: " + url);
+  return fetch(url)
    .then((r) => r.json())
    .then((contracts) => {
     var dataArray = [];
@@ -34,7 +37,7 @@
      }
     }
     contracts.ChartData = dataArray;
-    return { contracts, hasData, contractName: params.slug };
+    return { props: { contracts, hasData, contractName: params.slug } };
    });
  }
 </script>
@@ -45,14 +48,15 @@
  export let hasData;
  import { getContext, onMount, afterUpdate } from "svelte";
  import Highcharts from "highcharts/highstock";
- import { mode } from "../../../components/store.js";
+ import { mode } from "$lib/store.js";
+ import { browser } from "$app/env";
  var chartOptions;
 
  //https://stackoverflow.com/questions/64858904/how-to-trigger-a-function-when-there-is-a-value-change-in-subscribed-store-in-sv
  $: $mode, reloadPage();
 
  function reloadPage() {
-  if (process.browser) {
+  if (browser) {
    if ($mode != "default") {
     location.reload();
    }
@@ -61,14 +65,14 @@
   }
  }
 
+ var chartTitle =
+  getContext("token_name") +
+  " (" +
+  getContext("token_symbol") +
+  ") token DEX Chart";
+ var chartOptions = {};
  if (hasData == 1) {
-  var chartTitle =
-   getContext("token_name") +
-   " (" +
-   getContext("token_symbol") +
-   ") token DEX Chart";
-
-  var chartOptions = {
+  chartOptions = {
    rangeSelector: {
     inputBoxBorderColor: "#000000",
     inputStyle: {
@@ -140,7 +144,7 @@
  >
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/tokens/{getContext('token_name')}"
+  content="{import.meta.env.VITE_WEBSITE}/tokens/{getContext('token_name')}"
  />
  <meta
   name="description"

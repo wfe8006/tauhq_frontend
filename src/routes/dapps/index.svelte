@@ -1,23 +1,27 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, query, session }) {
   var url;
-  url = process.env.API_SERVER + "/dapps";
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/dapps";
+  return fetch(url)
    .then((r) => r.json())
    .then((dapps) => {
-    return { dapps };
+    return {
+     props: {
+      dapps,
+     },
+    };
    });
  }
 </script>
 
 <script>
- import Metatag from "../../components/Metatag.svelte";
+ import Metatag from "$lib/Metatag.svelte";
  export let dapps;
 </script>
 
 <svelte:head>
  <title>Lamden DApps</title>
- <meta property="og:url" content="{process.env.WEBSITE}/dapps" />
+ <meta property="og:url" content="{import.meta.env.VITE_WEBSITE}/dapps" />
  <Metatag />
 </svelte:head>
 <div class="row">
@@ -31,7 +35,7 @@
     <a href="/dapps/{dapp.Name.toLowerCase().split(' ').join('_')}">
      <div class="card p-0">
       <img
-       src="{process.env.IMG_SERVER}/img/{dapp.Name.toLowerCase()
+       src="{import.meta.env.VITE_IMG_SERVER}/img/{dapp.Name.toLowerCase()
         .split(' ')
         .join('_')}_sm.png"
        class="img-fluid rounded-top"

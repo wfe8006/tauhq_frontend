@@ -1,14 +1,17 @@
 <script context="module">
- export function preload({ params, query }, session) {
-  console.log("profiling started");
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
+  console.log("profiling started!!!");
   var start = new Date().getTime();
-  var url = process.env.API_SERVER + "/summary";
-  return this.fetch(url)
+  var url = import.meta.env.VITE_API_SERVER + "/summary";
+  console.log("url: " + import.meta.env.VITE_API_SERVER + "/summary");
+  return fetch(url)
    .then((r) => r.json())
    .then((summary) => {
     var end = new Date().getTime();
     var time = end - start;
     console.log("time taken: " + time);
+    console.log(summary);
 
     var stats = [
      {
@@ -77,8 +80,10 @@
     ];
 
     return {
-     summary,
-     stats,
+     props: {
+      summary,
+      stats,
+     },
     };
    });
  }
@@ -88,16 +93,13 @@
  export let summary;
  export let stats;
  import { each } from "svelte/internal";
- import Metatag from "../components/Metatag.svelte";
+ import Metatag from "$lib/Metatag.svelte";
  import { onMount } from "svelte";
- onMount(() => {
-  document.getElementById("top_menu_item").selectedIndex = 0;
- });
 </script>
 
 <svelte:head>
  <title>Lamden dDapps & Smart Contract/Block Explorer</title>
- <meta property="og:url" content="{process.env.WEBSITE}" />
+ <meta property="og:url" content="{import.meta.env.VITE_WEBSITE}" />
  <Metatag />
 </svelte:head>
 <br />
@@ -141,13 +143,15 @@
   <h4>Featured DApps</h4>
  </div>
 </div>
+
 <div class="row">
  {#each summary.Contracts as contract}
   <div class="col-sm-6 col-lg-4 col-xl-3 ">
    <a href="/dapps/{contract.DappName.toLowerCase().split(' ').join('_')}">
     <div class="card p-0">
      <img
-      src="{process.env.IMG_SERVER}/img/{contract.DappName.toLowerCase()
+      src="{import.meta.env
+       .VITE_IMG_SERVER}/img/{contract.DappName.toLowerCase()
        .split(' ')
        .join('_')}_sm.png"
       class="img-fluid rounded-top"

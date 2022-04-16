@@ -1,8 +1,9 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, query, session }) {
+  var query = url.searchParams;
   var url;
   var chartName = params.slug;
-  url = process.env.API_SERVER + "/stats/" + chartName;
+  url = import.meta.env.VITE_API_SERVER + "/stats/" + chartName;
   var chartTitle;
   if (chartName == "txns") {
    chartTitle = "Daily Txn Chart";
@@ -19,13 +20,13 @@
   }
 
   if (chartName == "tau_lost_forever") {
-   return this.fetch(url)
+   return fetch(url)
     .then((r) => r.json())
     .then((contracts) => {
-     return { contracts, chartTitle, chartName };
+     return { props: { contracts, chartTitle, chartName } };
     });
   } else {
-   return this.fetch(url)
+   return fetch(url)
     .then((r) => r.json())
     .then((contracts) => {
      var dataArray = [];
@@ -63,7 +64,7 @@
       dataArray[i] = obj;
      }
      contracts.ChartData = dataArray;
-     return { contracts, chartTitle, chartName };
+     return { props: { contracts, chartTitle, chartName } };
     });
   }
  }
@@ -79,15 +80,16 @@
 
  import { getContext, onMount, afterUpdate } from "svelte";
  import Highcharts from "highcharts/highstock";
- import Metatag from "../../components/Metatag.svelte";
- import { numberWithCommas, timesince } from "../../js/utils";
- import { mode } from "../../components/store.js";
+ import Metatag from "$lib/Metatag.svelte";
+ import { numberWithCommas, timesince } from "$lib/utils";
+ import { mode } from "$lib/store.js";
+ import { browser } from "$app/env";
  var chartOptions;
  //https://stackoverflow.com/questions/64858904/how-to-trigger-a-function-when-there-is-a-value-change-in-subscribed-store-in-sv
  $: $mode, reloadPage();
 
  function reloadPage() {
-  if (process.browser) {
+  if (browser) {
    if ($mode != "default" && chartName != "tau_lost_forever") {
     location.reload();
    }
@@ -176,7 +178,10 @@
  <title>
   Lamden {chartTitle}</title
  >
- <meta property="og:url" content="{process.env.WEBSITE}/stats/{chartName}}" />
+ <meta
+  property="og:url"
+  content="{import.meta.env.VITE_WEBSITE}/stats/{chartName}}"
+ />
  <Metatag />
 </svelte:head>
 <div class="row">

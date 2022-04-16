@@ -1,46 +1,48 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var firstID = 0;
   var lastID = 0;
   var url;
   var tokenName = params.slug;
   var isFirstPage = 1;
   var address;
-  if (query.address) {
-   address = query.address;
+  if (query.get("address")) {
+   address = query.get("address");
   } else {
    address = "";
   }
   console.log("addr: " + address.length);
 
   if (
-   (query.id > 1 && query.dir) ||
-   (query.id > 1 && query.dir && query.address)
+   (query.get("id") > 1 && query.get("dir")) ||
+   (query.get("id") > 1 && query.get("dir") && query.get("address"))
   ) {
-   var id = parseFloat(query.id);
-   var dir = query.dir;
+   var id = parseFloat(query.get("id"));
+   var dir = query.get("dir");
 
    isFirstPage = 0;
    url =
-    process.env.API_SERVER +
+    import.meta.env.VITE_API_SERVER +
     "/tokens/" +
     tokenName +
     "/transfers?dir=" +
     dir +
     "&id=" +
     id;
-   if (query.address) {
+   if (query.get("address")) {
     url += "&address=" + address;
    }
   } else {
-   url = process.env.API_SERVER + "/tokens/" + tokenName + "/transfers";
-   if (query.address) {
-    url += "?address=" + query.address;
+   url =
+    import.meta.env.VITE_API_SERVER + "/tokens/" + tokenName + "/transfers";
+   if (query.get("address")) {
+    url += "?address=" + query.get("address");
    }
   }
 
   var totalRecords = 0;
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((transactions) => {
     if (transactions.Transactions != null) {
@@ -56,17 +58,19 @@
      }
     }
     return {
-     transactions: transactions.Transactions,
-     firstID,
-     lastID,
-     tokenName,
-     isFirstPage,
-     oldestID: transactions.OldestID,
-     address,
-     tokenBalance: transactions.TokenBalance,
-     tokenBalanceUSD: transactions.TokenBalanceUSD,
-     totalSupply: transactions.TotalSupply,
-     tokenSymbol: transactions.TokenSymbol,
+     props: {
+      transactions: transactions.Transactions,
+      firstID,
+      lastID,
+      tokenName,
+      isFirstPage,
+      oldestID: transactions.OldestID,
+      address,
+      tokenBalance: transactions.TokenBalance,
+      tokenBalanceUSD: transactions.TokenBalanceUSD,
+      totalSupply: transactions.TotalSupply,
+      tokenSymbol: transactions.TokenSymbol,
+     },
     };
    });
  }
@@ -86,7 +90,7 @@
  export let totalSupply;
  export let tokenSymbol;
  export let address;
- import { numberWithCommas, timesince } from "../../../js/utils";
+ import { numberWithCommas, timesince } from "$lib/utils";
 </script>
 
 <svelte:head>
@@ -96,7 +100,7 @@
  >
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/tokens/{tokenName}/transfers"
+  content="{import.meta.env.VITE_WEBSITE}/tokens/{tokenName}/transfers"
  />
 </svelte:head>
 
@@ -135,7 +139,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="/tokens/{tokenName}/transfers{address == ''
       ? ''
       : '?address=' + address}"
@@ -150,7 +154,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
           /tokens/{tokenName}/transfers?dir=prev&id={firstID}{address == ''
       ? ''
@@ -163,7 +167,7 @@
   {#if transactions.length == 25 && transactions[transactions.length - 1].ID > oldestID}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
           /tokens/{tokenName}/transfers?dir=next&id={lastID}{address == ''
       ? ''
@@ -250,7 +254,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="/tokens/{tokenName}/transfers{address == ''
       ? ''
       : '?address=' + address}"
@@ -265,7 +269,7 @@
   {:else}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
           /tokens/{tokenName}/transfers?dir=prev&id={firstID}{address == ''
       ? ''
@@ -278,7 +282,7 @@
   {#if transactions.length == 25 && transactions[transactions.length - 1].ID > oldestID}
    <li class="page-item">
     <a
-     sapper:noscroll
+     sveltekit:noscroll
      href="
           /tokens/{tokenName}/transfers?dir=next&id={lastID}{address == ''
       ? ''

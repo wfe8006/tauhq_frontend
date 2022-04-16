@@ -1,5 +1,6 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, query, session }) {
+  var query = url.searchParams;
   var firstPage = 1;
   var prevPage = 1;
   var currentPage = 1;
@@ -7,14 +8,14 @@
   var lastPage = 1;
   var url;
   var totalRecords = 0;
-  if (query.page > 1) {
-   currentPage = parseInt(query.page);
-   url = process.env.API_SERVER + "/contracts?page=" + currentPage;
+  if (query.get("page") > 1) {
+   currentPage = parseInt(query.get("page"));
+   url = import.meta.env.VITE_API_SERVER + "/contracts?page=" + currentPage;
   } else {
-   url = process.env.API_SERVER + "/contracts";
+   url = import.meta.env.VITE_API_SERVER + "/contracts";
   }
   var totalRecords = 0;
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((contracts) => {
     if (currentPage == 1) {
@@ -34,20 +35,22 @@
      prevPage = currentPage - 1;
     }
     return {
-     contracts,
-     firstPage,
-     prevPage,
-     currentPage,
-     nextPage,
-     lastPage,
+     props: {
+      contracts,
+      firstPage,
+      prevPage,
+      currentPage,
+      nextPage,
+      lastPage,
+     },
     };
    });
  }
 </script>
 
 <script>
- import Paginator from "../../components/Paginator.svelte";
- import Metatag from "../../components/Metatag.svelte";
+ import Paginator from "$lib/Paginator.svelte";
+ import Metatag from "$lib/Metatag.svelte";
  export let contracts;
  export let firstPage;
  export let prevPage;
@@ -58,7 +61,7 @@
 
 <svelte:head>
  <title>Lamden Contracts</title>
- <meta property="og:url" content="{process.env.WEBSITE}/contracts" />
+ <meta property="og:url" content="{import.meta.env.VITE_WEBSITE}/contracts" />
  <Metatag />
 </svelte:head>
 <div class="row">

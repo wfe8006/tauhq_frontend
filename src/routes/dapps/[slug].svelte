@@ -1,8 +1,9 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, query, session }) {
+  var query = url.searchParams;
   var url;
-  url = process.env.API_SERVER + "/dapps/" + params.slug;
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/dapps/" + params.slug;
+  return fetch(url)
    .then((r) => r.json())
    .then((contracts) => {
     var dataArray = [];
@@ -55,7 +56,12 @@
      },
     ];
 
-    return { contracts, stats };
+    return {
+     props: {
+      contracts,
+      stats,
+     },
+    };
    });
  }
 </script>
@@ -65,13 +71,14 @@
  export let stats;
  import { onMount, afterUpdate } from "svelte";
  import Highcharts from "highcharts/highstock";
- import { mode } from "../../components/store.js";
+ import { mode } from "$lib/store.js";
+ import { browser } from "$app/env";
 
  //https://stackoverflow.com/questions/64858904/how-to-trigger-a-function-when-there-is-a-value-change-in-subscribed-store-in-sv
  $: $mode, reloadPage();
 
  function reloadPage() {
-  if (process.browser) {
+  if (browser) {
    if ($mode != "default") {
     location.reload();
    }
@@ -149,18 +156,20 @@
  <title>{contracts.DappName}</title>
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/dapps/{contracts.DappName}"
+  content="{import.meta.env.VITE_WEBSITE}/dapps/{contracts.DappName}"
  />
  <meta
   property="og:image"
-  content="{process.env.IMG_SERVER}/img/{contracts.DappName.toLowerCase()
+  content="{import.meta.env
+   .VITE_IMG_SERVER}/img/{contracts.DappName.toLowerCase()
    .split(' ')
    .join('_')}_lg.png"
  />
  <meta name="twitter:card" content="summary_large_image" />
  <meta
   name="twitter:image"
-  content="{process.env.IMG_SERVER}/img/{contracts.DappName.toLowerCase()
+  content="{import.meta.env
+   .VITE_IMG_SERVER}/img/{contracts.DappName.toLowerCase()
    .split(' ')
    .join('_')}_lg.png"
  />
@@ -195,7 +204,7 @@
  <div class="col">
   <img
    class="img-fluid"
-   src="{process.env.IMG_SERVER}/img/{contracts.DappName.toLowerCase()
+   src="{import.meta.env.VITE_IMG_SERVER}/img/{contracts.DappName.toLowerCase()
     .split(' ')
     .join('_')}_lg.png"
    alt="{contracts.DappName}"

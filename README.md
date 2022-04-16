@@ -1,29 +1,38 @@
-# Lamden Block Explorer Frontend
+# create-svelte
 
-### Running the project
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-Create a .env file with the custommizable content below in the project root directory:
+## Creating a project
 
-```
-API_SERVER=https://www.tauhq.com/api/v0
-IMG_SERVER=https://www.tauhq.com
-WEBSITE=<http://127.0.0.1 or www.yourwebsite.com>
-SITE_NAME=
-TAU_DONATION_ADDRESS=
-META_KEYWORD="
-META_DESCRIPTION=
-META_SITE_NAME=
-GTAG=<google tag manager id>
-ADSENSE=<google adsense id>
-TWITTER_PROFILE=<twitter handler>
-```
-
-Once you have created the project, install dependencies and run the project in development mode:
+If you're seeing this, you've probably already done this step. Congrats!
 
 ```bash
-cd tauhq_frontend
-npm install # or yarn
-npm run dev
+# create a new project in the current directory
+npm init svelte
+
+# create a new project in my-app
+npm init svelte my-app
 ```
 
-This will start the development server on [localhost:3000](http://localhost:3000). Open it and click around.
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

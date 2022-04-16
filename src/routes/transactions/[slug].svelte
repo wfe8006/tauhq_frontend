@@ -1,12 +1,13 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var url;
-  url = process.env.API_SERVER + "/transactions/" + params.slug;
+  url = import.meta.env.VITE_API_SERVER + "/transactions/" + params.slug;
   console.log(url);
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((transactions) => {
-    return { transactions };
+    return { props: { transactions } };
    });
  }
 </script>
@@ -14,7 +15,7 @@
 <script>
  export let transactions;
  import { onMount } from "svelte";
- import Metatag from "../../components/Metatag.svelte";
+ import Metatag from "$lib/Metatag.svelte";
 
  onMount(() => {});
 
@@ -62,7 +63,7 @@
  <title>Lamden Transaction #{transactions.Hash}</title>
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/transactions/{transactions.Hash}"
+  content="{import.meta.env.VITE_WEBSITE}/transactions/{transactions.Hash}"
  />
  <Metatag />
 </svelte:head>

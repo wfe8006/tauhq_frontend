@@ -1,16 +1,17 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var firstID = 0;
   var lastID = 0;
   var url;
   var address = params.slug;
   var isFirstPage = 1;
-  if (query.id > 1 && query.dir) {
-   var id = parseFloat(query.id);
+  if (query.get("id") > 1 && query.get("dir")) {
+   var id = parseFloat(query.get("id"));
    var dir = query.dir;
    isFirstPage = 0;
    url =
-    process.env.API_SERVER +
+    import.meta.env.VITE_API_SERVER +
     "/addresses/" +
     address +
     "?dir=" +
@@ -18,11 +19,11 @@
     "&id=" +
     id;
   } else {
-   url = process.env.API_SERVER + "/addresses/" + address;
+   url = import.meta.env.VITE_API_SERVER + "/addresses/" + address;
   }
 
   var totalRecords = 0;
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((transactions) => {
     if (transactions.Transactions != null) {
@@ -38,26 +39,30 @@
      }
     }
     return {
-     transactions: transactions.Transactions,
-     tokens: transactions.Tokens,
-     firstID,
-     lastID,
-     address,
-     isFirstPage,
-     oldestID: transactions.OldestID,
-     balance:
-      transactions.Balance == null ? 0 : numberWithCommas(transactions.Balance),
-     balanceUSD:
-      transactions.Balance == null
-       ? 0
-       : Intl.NumberFormat("en-US", {
-          minimumFractionDigits: 2,
-         }).format(transactions.BalanceUSD),
-     txn: transactions.Txn,
-     percentage: (
-      (transactions.Balance / 288090567.493886586209600228) *
-      100
-     ).toFixed(4),
+     props: {
+      transactions: transactions.Transactions,
+      tokens: transactions.Tokens,
+      firstID,
+      lastID,
+      address,
+      isFirstPage,
+      oldestID: transactions.OldestID,
+      balance:
+       transactions.Balance == null
+        ? 0
+        : numberWithCommas(transactions.Balance),
+      balanceUSD:
+       transactions.Balance == null
+        ? 0
+        : Intl.NumberFormat("en-US", {
+           minimumFractionDigits: 2,
+          }).format(transactions.BalanceUSD),
+      txn: transactions.Txn,
+      percentage: (
+       (transactions.Balance / 288090567.493886586209600228) *
+       100
+      ).toFixed(4),
+     },
     };
    });
  }
@@ -82,13 +87,16 @@
  export let txn = 0;
  export let percentage;
  export let tokens;
- import { numberWithCommas, timesince } from "../../js/utils";
- import Metatag from "../../components/Metatag.svelte";
+ import { numberWithCommas, timesince } from "$lib/utils";
+ import Metatag from "$lib/Metatag.svelte";
 </script>
 
 <svelte:head>
  <title>Lamden Address {address}</title>
- <meta property="og:url" content="{process.env.WEBSITE}/addresses/{address}" />
+ <meta
+  property="og:url"
+  content="{import.meta.env.VITE_WEBSITE}/addresses/{address}"
+ />
  <Metatag />
 </svelte:head>
 <div class="row">

@@ -1,11 +1,12 @@
 <script>
- export let segment;
  let keyword;
  let notFound = 0;
  let searchType;
  import { onMount } from "svelte";
- import { mode } from "./store.js";
- import { goto, stores } from "@sapper/app";
+ import { mode } from "$lib/store.js";
+ import { goto } from "$app/navigation";
+
+ import { page } from "$app/stores";
  export let showSearch;
  showSearch = 0;
 
@@ -16,7 +17,7 @@
 
  const handleClick = async () => {
   notFound = 0;
-  var url = process.env.API_SERVER + "/search?keyword=" + keyword;
+  var url = import.meta.env.VITE_API_SERVER + "/search?keyword=" + keyword;
   let result = await fetch(url).then((res) => res.json());
   if (result.Type == "notfound") {
    notFound = 1;
@@ -57,7 +58,7 @@
 
 <nav class="navbar navbar-expand-lg fixed-top ">
  <div class="container-fluid">
-  <a class="logo text-white-dm" href="/">{process.env.SITE_NAME}</a>
+  <a class="logo text-white-dm" href="/">{import.meta.env.VITE_SITE_NAME}</a>
   &nbsp;&nbsp;
   <select
    class="form-control form-control-lg ms-auto d-flex flex-row d-block d-md-none"
@@ -78,50 +79,50 @@
   <span class="ml-auto d-none d-md-block">
    <a class="pr-15" href="/stats"
     ><span
-     class:text-primary-dm="{segment === 'stats'}"
-     class:text-primary="{segment === 'stats'}"
+     class:text-primary-dm="{$page.url.pathname === 'stats'}"
+     class:text-primary="{$page.url.pathname === 'stats'}"
      class="text-white-dm font-weight-bold">Stats</span
     ></a
    >
    <a class="pr-15 link-secondary " href="/tokens"
     ><span
-     class:text-primary-dm="{segment === 'tokens'}"
-     class:text-primary="{segment === 'tokens'}"
+     class:text-primary-dm="{$page.url.pathname === 'tokens'}"
+     class:text-primary="{$page.url.pathname === 'tokens'}"
      class="text-white-dm font-weight-bold">Tokens</span
     ></a
    >
    <a class="pr-15" href="/dapps"
     ><span
-     class:text-primary-dm="{segment === 'dapps'}"
-     class:text-primary="{segment === 'dapps'}"
+     class:text-primary-dm="{$page.url.pathname === 'dapps'}"
+     class:text-primary="{$page.url.pathname === 'dapps'}"
      class="text-white-dm font-weight-bold">DApps</span
     ></a
    >
    <a class="pr-15" href="/contracts"
     ><span
-     class:text-primary-dm="{segment === 'contracts'}"
-     class:text-primary="{segment === 'contracts'}"
+     class:text-primary-dm="{$page.url.pathname === 'contracts'}"
+     class:text-primary="{$page.url.pathname === 'contracts'}"
      class="text-white-dm font-weight-bold">Contracts</span
     ></a
    >
    <a class="pr-15" href="/blocks"
     ><span
-     class:text-primary-dm="{segment === 'blocks'}"
-     class:text-primary="{segment === 'blocks'}"
+     class:text-primary-dm="{$page.url.pathname === 'blocks'}"
+     class:text-primary="{$page.url.pathname === 'blocks'}"
      class="text-white-dm font-weight-bold">Blocks</span
     ></a
    >
    <a class="pr-15" href="/transactions"
     ><span
-     class:text-primary-dm="{segment === 'transactions'}"
-     class:text-primary="{segment === 'transactions'}"
+     class:text-primary-dm="{$page.url.pathname === 'transactions'}"
+     class:text-primary="{$page.url.pathname === 'transactions'}"
      class="text-white-dm font-weight-bold">Transactions</span
     ></a
    >
    <a class="pr-15" href="/addresses"
     ><span
-     class:text-primary-dm="{segment === 'addresses'}"
-     class:text-primary="{segment === 'addresses'}"
+     class:text-primary-dm="{$page.url.pathname === 'addresses'}"
+     class:text-primary="{$page.url.pathname === 'addresses'}"
      class="text-white-dm font-weight-bold">Addresses</span
     ></a
    >

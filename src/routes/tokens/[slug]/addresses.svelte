@@ -1,5 +1,6 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var tokenName = params.slug;
   var firstPage = 1;
   var prevPage = 1;
@@ -12,12 +13,12 @@
   var firstBalance = 0;
   var lastID = 0;
   var lastBalance = 0;
-  var dir = query.dir;
-  if (query.id && query.balance && query.dir) {
-   var id = parseFloat(query.id);
-   var balance = parseFloat(query.balance);
+  var dir = query.get("dir");
+  if (query.get("id") && query.get("balance") && query.get("dir")) {
+   var id = parseFloat(query.get("id"));
+   var balance = parseFloat(query.get("balance"));
    url =
-    process.env.API_SERVER +
+    import.meta.env.VITE_API_SERVER +
     "/tokens/" +
     tokenName +
     "/addresses?id=" +
@@ -28,16 +29,17 @@
     dir;
    isFirstPage = 0;
   } else {
-   url = process.env.API_SERVER + "/tokens/" + tokenName + "/addresses";
+   url =
+    import.meta.env.VITE_API_SERVER + "/tokens/" + tokenName + "/addresses";
   }
 
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((tokenAddress) => {
     var addresses = [];
     var totalSupply;
     if (tokenAddress.Addresses == null) {
-     if (query.id && query.balance && query.dir) {
+     if (query.get("id") && query.get("balance") && query.get("dir")) {
       return this.redirect(301, "/tokens/" + tokenName + "/addresses");
      }
     }
@@ -53,23 +55,25 @@
      }
     }
     return {
-     addresses,
-     firstID,
-     firstBalance,
-     lastID,
-     lastBalance,
-     isFirstPage,
-     dir,
-     url,
-     tokenName,
-     totalSupply,
+     props: {
+      addresses,
+      firstID,
+      firstBalance,
+      lastID,
+      lastBalance,
+      isFirstPage,
+      dir,
+      url,
+      tokenName,
+      totalSupply,
+     },
     };
    });
  }
 </script>
 
 <script>
- import { numberWithCommas, timesince } from "../../../js/utils";
+ import { numberWithCommas, timesince } from "$lib/utils";
  export let tokenName;
  export let addresses;
  export let isFirstPage;
@@ -88,7 +92,7 @@
  >
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/tokens/{tokenName}/dextrades"
+  content="{import.meta.env.VITE_WEBSITE}/tokens/{tokenName}/dextrades"
  />
 </svelte:head>
 
@@ -99,7 +103,7 @@
   </li>
  {:else}
   <li class="page-item">
-   <a sapper:noscroll href="/tokens/{tokenName}/addresses" class="page-link"
+   <a sveltekit:noscroll href="/tokens/{tokenName}/addresses" class="page-link"
     >First</a
    >
   </li>
@@ -112,7 +116,7 @@
  {:else}
   <li class="page-item">
    <a
-    sapper:noscroll
+    sveltekit:noscroll
     href="/tokens/{tokenName}/addresses?dir=prev&id={firstID}&balance={firstBalance}"
     class="page-link">&#60;</a
    >
@@ -121,7 +125,7 @@
  {#if addresses.length == 25 || isFirstPage == 1}
   <li class="page-item">
    <a
-    sapper:noscroll
+    sveltekit:noscroll
     href="/tokens/{tokenName}/addresses?dir=next&id={lastID}&balance={lastBalance}"
     class="page-link">&#62;</a
    >
@@ -182,7 +186,7 @@
   </li>
  {:else}
   <li class="page-item">
-   <a sapper:noscroll href="/tokens/{tokenName}/addresses" class="page-link"
+   <a sveltekit:noscroll href="/tokens/{tokenName}/addresses" class="page-link"
     >First</a
    >
   </li>
@@ -195,7 +199,7 @@
  {:else}
   <li class="page-item">
    <a
-    sapper:noscroll
+    sveltekit:noscroll
     href="/tokens/{tokenName}/addresses?dir=prev&id={firstID}&balance={firstBalance}"
     class="page-link">&#60;</a
    >
@@ -204,7 +208,7 @@
  {#if addresses.length == 25 || isFirstPage == 1}
   <li class="page-item">
    <a
-    sapper:noscroll
+    sveltekit:noscroll
     href="/tokens/{tokenName}/addresses?dir=next&id={lastID}&balance={lastBalance}"
     class="page-link">&#62;</a
    >

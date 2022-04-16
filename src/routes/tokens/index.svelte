@@ -1,5 +1,6 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, session }) {
+  var query = url.searchParams;
   var firstPage = 1;
   var prevPage = 1;
   var currentPage = 1;
@@ -7,14 +8,14 @@
   var lastPage = 1;
   var url;
   var totalRecords = 0;
-  if (query.page > 1) {
-   currentPage = parseInt(query.page);
-   url = process.env.API_SERVER + "/tokens?page=" + currentPage;
+  if (query.get("page") > 1) {
+   currentPage = parseInt(query.get("page"));
+   url = import.meta.env.VITE_API_SERVER + "/tokens?page=" + currentPage;
   } else {
-   url = process.env.API_SERVER + "/tokens";
+   url = import.meta.env.VITE_API_SERVER + "/tokens";
   }
   var totalRecords = 0;
-  return this.fetch(url)
+  return fetch(url)
    .then((r) => r.json())
    .then((tokens) => {
     if (currentPage == 1) {
@@ -34,19 +35,21 @@
      prevPage = currentPage - 1;
     }
     return {
-     tokens,
-     firstPage,
-     prevPage,
-     currentPage,
-     nextPage,
-     lastPage,
+     props: {
+      tokens,
+      firstPage,
+      prevPage,
+      currentPage,
+      nextPage,
+      lastPage,
+     },
     };
    });
  }
 </script>
 
 <script>
- import Paginator from "../../components/Paginator.svelte";
+ import Paginator from "$lib/Paginator.svelte";
  export let tokens;
  export let firstPage;
  export let prevPage;
@@ -57,7 +60,7 @@
 
 <svelte:head>
  <title>Lamden TAU Tokens</title>
- <meta property="og:url" content="{process.env.WEBSITE}/tokens" />
+ <meta property="og:url" content="{import.meta.env.VITE_WEBSITE}/tokens" />
 </svelte:head>
 <div class="row">
  <h1>Tokens</h1>
@@ -86,13 +89,14 @@
     <tr>
      <td class="text-center" width="5%">
       <object
-       data="{process.env.IMG_SERVER}/img/token_logo/{token.TokenContract}.jpg"
+       data="{import.meta.env
+        .VITE_IMG_SERVER}/img/token_logo/{token.TokenContract}.jpg"
        type="image/jpg"
        class="token_logo"
        aria-label="{token.TokenName}"
       >
        <img
-        src="{process.env.IMG_SERVER}/img/token_logo/unknown.svg"
+        src="{import.meta.env.VITE_IMG_SERVER}/img/token_logo/unknown.svg"
         alt="no image"
         class="token_logo"
        />

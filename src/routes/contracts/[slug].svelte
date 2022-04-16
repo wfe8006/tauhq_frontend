@@ -1,11 +1,12 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, query, session }) {
+  var query = url.searchParams;
   var url;
-  url = process.env.API_SERVER + "/contracts/" + params.slug;
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/contracts/" + params.slug;
+  return fetch(url)
    .then((r) => r.json())
    .then((contracts) => {
-    return { contracts };
+    return { props: { contracts } };
    });
  }
 </script>
@@ -13,7 +14,7 @@
 <script>
  export let contracts;
  import { onMount, afterUpdate } from "svelte";
- import Metatag from "../../components/Metatag.svelte";
+ import Metatag from "$lib/Metatag.svelte";
  function formatCode(code) {
   var codeXML = code.replace(/__/gi, "");
   var formattedCode = codeXML.split("\n");
@@ -50,7 +51,7 @@
  <title>Lamden Contract {contracts.ContractName}</title>
  <meta
   property="og:url"
-  content="{process.env.WEBSITE}/contracts/{contracts.ContractName}"
+  content="{import.meta.env.WEBSITE}/contracts/{contracts.ContractName}"
  />
  <Metatag />
 </svelte:head>
@@ -95,19 +96,20 @@
 </div>
 <div class="bytecode">
  <pre><code>
-  <div
-        class="Box-body blob-wrapper data">
-    <table
-          class="code tab-size"
-          data-tab-size="8">
+  <div class="Box-body blob-wrapper data">
+    <table class="code tab-size" data-tab-size="8">
       <tbody>
         {#each formatCode(contracts.ContractCode) as line, key}
-              <tr>
-            <td class="blob_num text-white-dm bg-white-lm bg-black-dm">{key + 1}</td>
+       <tr>
+            <td class="blob_num text-white-dm bg-white-lm bg-black-dm"
+         >{key + 1}</td
+        >
             <td
-                  class="blob_code blob_code_inner text-white-dm bg-white-lm bg-black-dm">{line}</td>
+         class="blob_code blob_code_inner text-white-dm bg-white-lm bg-black-dm"
+         >{line}</td
+        >
           </tr>
-            {/each}
+      {/each}
       </tbody>
     </table>
   </div>

@@ -1,11 +1,12 @@
 <script context="module">
- export function preload({ params, query }, session) {
+ export function load({ params, url, query, session }) {
+  var query = url.searchParams;
   var url;
-  url = process.env.API_SERVER + "/blocks/" + params.slug;
-  return this.fetch(url)
+  url = import.meta.env.VITE_API_SERVER + "/blocks/" + params.slug;
+  return fetch(url)
    .then((r) => r.json())
    .then((blocks) => {
-    return { blocks, blockID: params.slug };
+    return { props: { blocks, blockID: params.slug } };
    });
  }
 </script>
@@ -13,7 +14,7 @@
 <script>
  export let blocks;
  export let blockID;
- import Metatag from "../../components/Metatag.svelte";
+ import Metatag from "$lib/Metatag.svelte";
 
  function timesince(timestamp) {
   //timestamp in milliseconds so * 1000
@@ -43,7 +44,10 @@
 
 <svelte:head>
  <title>Lamden Block #{blocks.ID}</title>
- <meta property="og:url" content="{process.env.WEBSITE}/blocks/{blocks.ID}" />
+ <meta
+  property="og:url"
+  content="{import.meta.env.VITE_WEBSITE}/blocks/{blocks.ID}"
+ />
  <Metatag />
 </svelte:head>
 <div class="row">

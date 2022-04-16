@@ -1,15 +1,12 @@
-const numberWithCommas = (n) => {
+export const numberWithCommas = (n) => {
     var parts = parseFloat(n).toFixed(2).toString().split(".");
     return (
         parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
         (parts[1] ? "." + parts[1] : "")
     );
-}
+};
 
-
-
-
-const timesince = (timestamp) => {
+export const timesince = (timestamp) => {
     if (timestamp == 0) {
         return "-";
     }
@@ -33,15 +30,15 @@ const timesince = (timestamp) => {
         return Math.floor(interval) + " mins ago";
     }
     return Math.floor(diff) + " secs ago";
-}
+};
 
-const nFormatter = (num, digits) => {
+export const nFormatter = (num, digits) => {
     var si = [
         { value: 1, symbol: "" },
-        { value: 1E3, symbol: "k" },
-        { value: 1E6, symbol: "M" },
-        { value: 1E9, symbol: "B" },
-        { value: 1E12, symbol: "T" },
+        { value: 1e3, symbol: "k" },
+        { value: 1e6, symbol: "M" },
+        { value: 1e9, symbol: "B" },
+        { value: 1e12, symbol: "T" },
     ];
     var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
     var i;
@@ -51,11 +48,4 @@ const nFormatter = (num, digits) => {
         }
     }
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
-}
-
-module.exports = {
-    numberWithCommas,
-    timesince,
-    nFormatter,
-
-}
+};
